@@ -13,9 +13,11 @@ data_url = dvc.api.get_url(path=str(Config.DATASET_FILE_PATH), repo=str(Config.R
 
 df = pd.read_csv(data_url, sep=',')
 
+mlflow.set_experiment('SmartAd')
+
 
 df = df.query("not (yes == 0 & no == 0)")
-df_train, df_test = train_test_split(df, test_size=0.1, random_state=Config.RANDOM_SEED,)
+df_train, df_test = train_test_split(df, test_size=0.1, random_state=Config.RANDOM_SEED)
 
 # Log data params
 mlflow.log_param('data_url', data_url)
