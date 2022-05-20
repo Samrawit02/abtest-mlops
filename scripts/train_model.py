@@ -11,7 +11,7 @@ Config.MODELS_PATH.mkdir(parents=True, exist_ok=True)
 X_train = pd.read_csv(str(Config.FEATURES_PATH / "train_features.csv"))
 y_train = pd.read_csv(str(Config.FEATURES_PATH / "train_labels.csv"))
 
-0
+
 class TrainModel():
   '''
   Class trains a model using 5-fold cross validation and returns the best model
