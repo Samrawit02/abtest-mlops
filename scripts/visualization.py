@@ -7,8 +7,11 @@ Created on Fri May 13 10:16:34 2022
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import plotly.express as px
+from sklearn import tree
+from sklearn import metrics
 
 
 
@@ -45,3 +48,19 @@ def plot_heatmap(df:pd.DataFrame, title:str, cmap='Reds')->None:
     sns.heatmap(df, annot=True, cmap=cmap, vmin=0, vmax=1, fmt='.2f', linewidths=.7, cbar=True )
     plt.title(title, size=20, fontweight='bold')
     plt.show()
+
+def plot_feature_importance():
+  plt.figure(figsize=(10, 6))
+  ax = sns.barplot(x="Feature Importance", y=feat_imp.index, data=feat_imp)
+  plt.ylabel('Feature', fontsize=14)
+  plt.xlabel('Feature Importance', fontsize=14)
+  plt.show()
+
+def plot_confusion_metrics(actual, y_preds):
+  plt.figure(figsize=(8, 6))
+  cf_matrix = metrics.confusion_matrix(actual, y_preds)
+  sns.heatmap(cf_matrix / np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
+  plt.title('Confusion matrix', fontsize=15, fontweight='bold')
+  plt.ylabel('Actual', fontsize=14)
+  plt.xlabel('Predicted', fontsize=14)
+  plt.show()
