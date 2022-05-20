@@ -43,7 +43,7 @@ else:
 
   column = int(sys.argv[1])
   np.random.seed(Config.RANDOM_SEED)
-  version = 'v2'  # this is the version that contains the whole data
+  version = 'v1'  # this is the version that contains the whole data
   data_url = dvc.api.get_url(path=str(Config.DATASET_FILE_PATH), repo=str(Config.REPO), rev=version)
  
   df = pd.read_csv(data_url, sep=',')
