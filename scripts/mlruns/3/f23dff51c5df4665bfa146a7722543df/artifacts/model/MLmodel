@@ -1,0 +1,22 @@
+artifact_path: model
+flavors:
+  python_function:
+    data: model.xgb
+    env: conda.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.10.4
+  xgboost:
+    code: null
+    data: model.xgb
+    model_class: xgboost.sklearn.XGBClassifier
+    xgb_version: 1.6.1
+mlflow_version: 1.26.0
+model_uuid: 91b751ad5d2c422e9ac75d66183e843b
+run_id: f23dff51c5df4665bfa146a7722543df
+signature:
+  inputs: '[{"name": "experiment", "type": "long"}, {"name": "hour", "type": "long"},
+    {"name": "date_of_week", "type": "long"}, {"name": "date_of_month", "type": "long"},
+    {"name": "device_make", "type": "long"}, {"name": "platform_os", "type": "long"},
+    {"name": "browser", "type": "long"}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int32", "shape": [-1]}}]'
+utc_time_created: '2022-05-20 14:13:36.726433'

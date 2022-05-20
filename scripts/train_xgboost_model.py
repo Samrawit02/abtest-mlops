@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri May 13 10:16:34 2022
-
-@author: samrit
-"""
-
 
 import pickle
 from config import Config
 from xgboost import XGBClassifier
-import train_model
+from train_model import TrainModel
 
 '''
   simple script for training XGBoost using TrainModel class
@@ -20,9 +13,16 @@ def model(param):
   return model
 
 
+params = [
+  {'learning_rate': 0.01},
+  {'learning_rate': 0.02},
+  {'learning_rate': 0.03},
+  {'learning_rate': 0.04},
+  {'learning_rate': 0.05}]
 
-final_model = train_model(model, "XGBoost")
 
-# final_model, best_param, avg_metrics = train_model.get_optimal_model()
+train_model = TrainModel(model, "XGBoost", params=params)
+
+final_model, best_param, avg_metrics = train_model.get_optimal_model()
 
 pickle.dump(final_model, open(str(Config.MODELS_PATH / "xgboost_model.pickle"), "wb"))
