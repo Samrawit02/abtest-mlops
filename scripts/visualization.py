@@ -7,8 +7,11 @@ Created on Fri May 13 10:16:34 2022
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import plotly.express as px
+from sklearn import tree
+from sklearn import metrics
 
 
 
