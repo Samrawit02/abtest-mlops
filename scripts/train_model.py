@@ -1,87 +1,92 @@
-import math
-import  pandas as pd
-from config import Config
-
-from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import mlflow
-import mlflow.sklearn
-from mlflow.models.signature import infer_signature
+from config import Config
+import pandas as pd
+from sklearn.model_selection import KFold
+from evaluate_model import EvaluateModel
+
 
 Config.MODELS_PATH.mkdir(parents=True, exist_ok=True)
 
 
-def eval_metrics(actual, pred):
-  rmse = math.sqrt(mean_squared_error(actual, pred))
-  mae = mean_absolute_error(actual, pred)
-  r2 = r2_score(actual, pred)
-  return rmse, mae, r2
-
-X_train = pd.read_csv(Config.FEATURES_PATH / "train_features.csv")
-y_train = pd.read_csv(Config.FEATURES_PATH / "train_labels.csv")
+X_train = pd.read_csv(str(Config.FEATURES_PATH / "train_features.csv"))
+y_train = pd.read_csv(str(Config.FEATURES_PATH / "train_labels.csv"))
 
 
-def train_model(_model, model_name):
-    mlflow.set_experiment(model_name)
+class TrainModel():
+  '''
+  Class trains a model using 5-fold cross validation and returns the best model
+  '''
 
-    kf = KFold(n_splits=5)
-    solvers = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
-    avg_score = 0
-    avg_rmse = 0
-    avg_mae = 0
-    avg_r2 = 0
-    best_model = None
-    best_solver = solvers[0]
+  def __init__(self, model, name, params):
+    self.model = model
+    self.name = name
+    self.params = params
 
-    if(model_name == 'XGBoost'):
-        mlflow.xgboost.autolog()
+  def get_avg_metics(self, metrics_list):
+    length = len(metrics_list)
+
+    return dict(
+        accuracy=sum([m["accuracy"] for m in metrics_list]) / length,
+        r_squared=sum([m["r_squared"] for m in metrics_list]) / length,
+        rmse=sum([m["rmse"] for m in metrics_list]) / length,
+        mae=sum([m["mae"] for m in metrics_list]) / length,
+    )
+
+  def get_optimal_model(self):
+    if(self.name == 'XGBoost'):
+      mlflow.set_experiment('XGBoost')
+      mlflow.xgboost.autolog()
+
+    elif(self.name == 'Decision Tree'):
+      mlflow.set_experiment('Decision Tree')
+      mlflow.sklearn.autolog()
+
+    elif(self.name=='Random forest'):
+      mlflow.set_experiment('Random forest')
+      mlflow.sklearn.autolog()
+
     else:
-        mlflow.sklearn.autolog()
-    mlflow.log_param('Model', model_name)
-    mlflow.log_param('Solvers', solvers)
+      mlflow.set_experiment('Logistic Regression')
+      mlflow.sklearn.autolog()
+    return self.train_model()
 
-    for solver in solvers:
-        score_list = []
-        rmse_list = []
-        mae_list = []
-        r2_list = []
-        model = _model(solver)
-        randomIter = kf.split(X_train)
-        for i in range(5):
-            train_index, val_index = next(randomIter)
-            _X_train = X_train.iloc[train_index]
-            _y_train = y_train.iloc[train_index]
+  def train_model(self):
+    best_model = None
+    best_param = None
+    avg_metrics = dict(
+        accuracy=0,
+        r_squared=0,
+        rmse=0,
+        mae=0
+    )
 
-            _X_val = X_train.iloc[val_index]
-            _y_val = y_train.iloc[val_index]
+    for param in self.params:
+      new_model = self.model(param)
+      metrics = self.train(new_model, 5)
+      new_avg_metrics = self.get_avg_metics(metrics)
+      if(new_avg_metrics["accuracy"] > avg_metrics["accuracy"]):
+        best_model = new_model
+        best_param = param
+        avg_metrics = new_avg_metrics
 
-            model.fit(_X_train, _y_train.to_numpy().ravel())
-            y_pred = model.predict(_X_val)
-            _score = accuracy_score(_y_val, y_pred)
-            _rmse, _mae, _r2 = eval_metrics(_y_val, y_pred)
-            score_list.append(_score)
-            rmse_list.append(_rmse)
-            mae_list.append(_mae)
-            r2_list.append(_r2)
+    return best_model, best_param, avg_metrics
 
-        avg_score_for_solver = sum(score_list) / len(score_list)
-        if(avg_score_for_solver > avg_score):
-            avg_score = avg_score_for_solver
-            avg_rmse = sum(rmse_list) / len(rmse_list)
-            avg_mae = sum(mae_list) / len(mae_list)
-            avg_r2 = sum(r2_list) / len(r2_list)
-            best_model = model
-            best_solver = solver
+  def train(self, new_model, num_split):
+    kf = KFold(n_splits=num_split)
+    randomIter = kf.split(X_train)
+    metrics_list = []
+    for i in range(5):
+      train_index, val_index = next(randomIter)
+      _X_train = X_train.iloc[train_index]
+      _y_train = y_train.iloc[train_index]
 
-    mlflow.log_param('Best Solver', best_solver)
+      _X_val = X_train.iloc[val_index]
+      _y_val = y_train.iloc[val_index]
 
-    if(model_name == 'XGBoost'):
-        mlflow.log_metric("Average Score", avg_score)
-        mlflow.log_metric("RMSE", avg_rmse)
-        mlflow.log_metric("MAE", avg_mae)
-        mlflow.log_metric("R2", avg_r2)
-        signature = infer_signature(X_train, model.predict(X_train))
-        mlflow.xgboost.log_model(model, model_name, signature=signature)
+      new_model.fit(_X_train, _y_train.to_numpy().ravel())
+      y_pred = new_model.predict(_X_val)
+      evaluate = EvaluateModel(_y_val, y_pred)
+      metrics = evaluate.get_metrics()
+      metrics_list.append(metrics)
 
-    return best_model
+    return metrics_list
