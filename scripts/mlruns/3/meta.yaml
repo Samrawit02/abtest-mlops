@@ -1,0 +1,4 @@
+artifact_location: file:///C:/Users/samrit/Documents/10Academy/week2/SmartAd%20contribution/abtest-ml/abtest-mlops/scripts/mlruns/3
+experiment_id: '3'
+lifecycle_stage: active
+name: Random forest

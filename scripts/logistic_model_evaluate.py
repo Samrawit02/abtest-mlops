@@ -2,7 +2,7 @@ import json
 import pickle
 import pandas as pd
 from config import Config
-from model_evaluate import EvaluateModel
+from evaluate_model import EvaluateModel
 
 
 '''

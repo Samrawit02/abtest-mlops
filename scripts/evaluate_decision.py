@@ -2,7 +2,7 @@ import json
 import pickle
 import pandas as pd
 from config import Config
-from evaluate_model import EvaluateModel
+from model_evaluate import EvaluateModel
 
 '''
 This is a simple script for computing evaluation metrics for decision tree model
