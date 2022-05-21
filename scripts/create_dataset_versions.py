@@ -6,7 +6,7 @@ import mlflow
 
 import dvc.api
 from config import Config
-# my_logger = get_logger("Create Dataset Versions")
+
 my_logger = logging.getLogger("Create Dataset Versions")
 
 '''
