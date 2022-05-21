@@ -15,7 +15,7 @@ jobs:
           #dvc repro                        # Reproduce pipeline
       - name: Write CML report
         env:
-          REPO_TOKEN: ${{ secrets.TOKEN }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat data/test.csv >> report.md
           cml send-comment report.md
