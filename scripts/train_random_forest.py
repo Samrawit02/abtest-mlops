@@ -11,7 +11,7 @@ from train_model import TrainModel
 
 
 def model(param):
-    model = RandomForestClassifier(solver=param, random_state=42)
+    model = RandomForestClassifier(random_state=42)
     return model
 
 

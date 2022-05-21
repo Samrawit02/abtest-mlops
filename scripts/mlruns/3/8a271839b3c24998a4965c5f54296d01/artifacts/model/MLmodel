@@ -1,0 +1,22 @@
+artifact_path: model
+flavors:
+  python_function:
+    env: conda.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    python_version: 3.10.4
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.1.1
+mlflow_version: 1.26.0
+model_uuid: ecf739b1ef3e4a458bc6ec2bd9e16ef6
+run_id: 8a271839b3c24998a4965c5f54296d01
+signature:
+  inputs: '[{"name": "experiment", "type": "long"}, {"name": "hour", "type": "long"},
+    {"name": "date_of_week", "type": "long"}, {"name": "date_of_month", "type": "long"},
+    {"name": "device_make", "type": "long"}, {"name": "platform_os", "type": "long"},
+    {"name": "browser", "type": "long"}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+utc_time_created: '2022-05-21 12:30:23.973702'
