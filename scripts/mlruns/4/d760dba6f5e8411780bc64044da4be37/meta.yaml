@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/samrit/Documents/10Academy/week2/SmartAd%20contribution/abtest-ml/abtest-mlops/scripts/mlruns/4/d760dba6f5e8411780bc64044da4be37/artifacts
+end_time: 1659520471671
+entry_point_name: ''
+experiment_id: '4'
+lifecycle_stage: active
+name: ''
+run_id: d760dba6f5e8411780bc64044da4be37
+run_uuid: d760dba6f5e8411780bc64044da4be37
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1659520450384
+status: 3
+tags: []
+user_id: Samrit
